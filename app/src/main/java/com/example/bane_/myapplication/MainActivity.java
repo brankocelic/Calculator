@@ -9,7 +9,12 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tekst; String result; boolean condition; char operation; boolean firstNumber; boolean newCalculation;
+    TextView tekst;
+    String result;
+    boolean condition;
+    char operation;
+    boolean firstNumber;
+    boolean newCalculation;
 
     boolean usedEqual;
 
@@ -20,40 +25,48 @@ public class MainActivity extends AppCompatActivity {
 
         tekst = (TextView) findViewById(R.id.Text);
 
-        result="";  condition = false; firstNumber = true; operation = 'p';  newCalculation=false; usedEqual=true;
-
-       }
-    public void onClic(View view)
-    {
-
-        usedEqual=false;
-
-        if(condition){ tekst.setText(""); condition=false; }
-
-        if(newCalculation && operation=='p') { result=""; newCalculation=false;}
-
-        Button button = (Button) view;
-
-        if(tekst.getText().toString().equals("0") && button.getText().toString().equals("0")) return;
-
-        else if(tekst.getText().toString().equals("0") && tekst.getText().toString().length() == 1 && !button.getText().toString().equals("0"))
-        {
-            tekst.setText(button.getText().toString());
-
-            if(firstNumber) result=button.getText().toString();
-
-        }
-        else {
-            tekst.setText(tekst.getText().toString() + button.getText().toString());
-
-            if(firstNumber) result+=button.getText().toString();
-             }
+        result = "";
+        condition = false;
+        firstNumber = true;
+        operation = 'p';
+        newCalculation = false;
+        usedEqual = true;
 
     }
 
-    public void plus(View view)
-    {
-        if (!result.equals("")) {
+    public void onClic(View view) {
+
+        usedEqual = false;
+
+        if (condition) {
+            tekst.setText("");
+            condition = false;
+        }
+
+        if (newCalculation && operation == 'p') {
+            result = "";
+            newCalculation = false;
+        }
+
+        Button button = (Button) view;
+
+        if (tekst.getText().toString().equals("0") && button.getText().toString().equals("0"))
+            return;
+
+        else if (tekst.getText().toString().equals("0") && tekst.getText().toString().length() == 1 && !button.getText().toString().equals("0")) {
+            tekst.setText(button.getText().toString());
+        } else {
+            tekst.setText(tekst.getText().toString() + button.getText().toString());
+        }
+
+    }
+
+    public void plus(View view) {
+        if (!tekst.getText().equals("")) {
+            if (tekst.getText().equals(("-"))) return;
+
+            if (firstNumber && !condition) result += tekst.getText().toString();
+
             if (!tekst.getText().toString().equals("Error")) doOperation();
 
             operation = '+';
@@ -61,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             if (tekst.getText().toString().equals("Error")) return;
 
             else if (Double.parseDouble(result) % 1 == 0)
-                tekst.setText("" + ((int) Double.parseDouble(result)));
+                tekst.setText(String.format("%.0f", Double.parseDouble(result)));
 
             else tekst.setText(result);
 
@@ -72,9 +85,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void minus(View view)
-    {
-        if (!result.equals("")) {
+    public void minus(View view) {
+        if (!tekst.getText().equals("")) {
+            if (tekst.getText().equals(("-"))) return;
+
+            if (firstNumber && !condition) result = tekst.getText().toString();
+
             if (!tekst.getText().toString().equals("Error")) doOperation();
 
             operation = '-';
@@ -82,18 +98,26 @@ public class MainActivity extends AppCompatActivity {
             if (tekst.getText().toString().equals("Error")) return;
 
             else if (Double.parseDouble(result) % 1 == 0)
-                tekst.setText("" + ((int) Double.parseDouble(result)));
+                tekst.setText(String.format("%.0f", Double.parseDouble(result)));
 
             else tekst.setText(result);
 
             condition = true;
 
             firstNumber = false;
+        } else {
+            tekst.setText("-");
+
+            condition = false;
         }
     }
-    public void times(View view)
-    {
-        if (!result.equals("")) {
+
+    public void times(View view) {
+        if (!tekst.getText().equals("")) {
+            if (tekst.getText().equals(("-"))) return;
+
+            if (firstNumber && !condition) result += tekst.getText().toString();
+
             if (!tekst.getText().toString().equals("Error")) doOperation();
 
             operation = '*';
@@ -101,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             if (tekst.getText().toString().equals("Error")) return;
 
             else if (Double.parseDouble(result) % 1 == 0)
-                tekst.setText("" + ((int) Double.parseDouble(result)));
+                tekst.setText(String.format("%.0f", Double.parseDouble(result)));
 
             else tekst.setText(result);
 
@@ -110,9 +134,13 @@ public class MainActivity extends AppCompatActivity {
             firstNumber = false;
         }
     }
-    public void divide(View view)
-    {
-        if (!result.equals("")) {
+
+    public void divide(View view) {
+        if (!tekst.getText().equals("")) {
+            if (tekst.getText().equals(("-"))) return;
+
+            if (firstNumber && !condition) result = tekst.getText().toString();
+
             if (!tekst.getText().toString().equals("Error")) doOperation();
 
             operation = '/';
@@ -120,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             if (tekst.getText().toString().equals("Error")) return;
 
             else if (Double.parseDouble(result) % 1 == 0)
-                tekst.setText("" + ((int) Double.parseDouble(result)));
+                tekst.setText(String.format("%.0f", Double.parseDouble(result)));
 
             else tekst.setText(result);
 
@@ -129,17 +157,26 @@ public class MainActivity extends AppCompatActivity {
             firstNumber = false;
         }
     }
-    public void equal(View view)
-    {
-        if(tekst.getText().equals("")) return;
+
+    public void equal(View view) {
+        if (tekst.getText().equals("")) return;
         else {
+            if (tekst.getText().equals(("-"))) return;
+
+            if (firstNumber) result = tekst.getText().toString();
+
             if (!tekst.getText().toString().equals("Error")) doOperation();
 
-            if (tekst.getText().toString().equals("Error")) return;
+            if (tekst.getText().toString().equals("Error")) {
+                condition = true;
+                operation = 'p';
+                firstNumber = true;
+                newCalculation = true;
+                usedEqual = true;
+                return;
+            } else if (Double.parseDouble(result) % 1 == 0)
+                tekst.setText(String.format("%.0f", Double.parseDouble(result)));
 
-            else if (Double.parseDouble(result) % 1 == 0)
-                tekst.setText("" + ((int) Double.parseDouble(result)));
-            
             else tekst.setText(result);
 
             condition = true;
@@ -153,71 +190,89 @@ public class MainActivity extends AppCompatActivity {
             usedEqual = true;
         }
     }
-    public void point(View view)
-    {
-        if(!tekst.getText().toString().equals("Error"))
-        {
-            if(tekst.getText().toString().equals(""))
-            {
-                tekst.setText("0.");
 
-                if(firstNumber) result+="0.";
+    public void point(View view) {
+        if (!tekst.getText().toString().equals("Error")) {
+            if (tekst.getText().equals(("-"))) {
+                tekst.setText(tekst.getText().toString() + "0.");
+                return;
             }
 
-            if(firstNumber && !tekst.getText().toString().contains(".")) result+=".";
+            if (usedEqual) {
+                tekst.setText("0.");
+                condition = false;
+            }
 
-            if(tekst.getText().toString().contains(".")) return;
+            if (operation != 'p' && !tekst.getText().toString().contains(".")) {
+                tekst.setText("0.");
+                condition = false;
+            }
+
+            if (tekst.getText().toString().equals("")) tekst.setText("0.");
+
+            if (tekst.getText().toString().contains(".")) return;
 
             else tekst.setText(tekst.getText().toString() + ".");
+
+        } else {
+            tekst.setText("");
+
+            tekst.setText("0.");
+
+            condition = false;
+
         }
     }
-    public void del(View view)
-    {
-        if(!tekst.getText().toString().equals("Error"))
-        {
-            if(!usedEqual) {
+
+    public void del(View view) {
+        if (!tekst.getText().toString().equals("Error")) {
+            if (!usedEqual) {
                 if (tekst.getText().toString().equals("")) return;
                 else
                     tekst.setText(tekst.getText().toString().substring(0, tekst.getText().toString().length() - 1));
+            } else {
+                tekst.setText("");
             }
+        } else {
+            tekst.setText("");
         }
     }
-    public void delAll(View view)
-    {
+
+    public void delAll(View view) {
         tekst.setText("");
 
-        result="";
-
-        condition = true;
+        result = "";
 
         firstNumber = true;
 
-        newCalculation=true;
-
-        operation='p';
+        operation = 'p';
     }
-    public void doOperation()
-    {
-        if(!condition)
-        {
-            if(operation == '+') result = "" + (Double.parseDouble(result) + Double.parseDouble(tekst.getText().toString()) );
+
+    public void doOperation() {
+        if (!condition) {
+            if (operation == '+')
+                result = "" + (Double.parseDouble(result) + Double.parseDouble(tekst.getText().toString()));
 
 
+            if (operation == '-')
+                result = "" + (Double.parseDouble(result) - Double.parseDouble(tekst.getText().toString()));
 
-            if(operation == '-')  result = "" + (Double.parseDouble(result) - Double.parseDouble(tekst.getText().toString()));
 
+            if (operation == '*')
+                result = "" + (Double.parseDouble(result) * Double.parseDouble(tekst.getText().toString()));
 
-            if(operation == '*') result = "" + (Double.parseDouble(result) * Double.parseDouble(tekst.getText().toString()));
-
-            }
-
-            if(operation == '/')
-            {
-                if(tekst.getText().toString().equals("0")) { tekst.setText("Error"); result = ""; condition=true; firstNumber = true;}
-
-                else result = "" + (Double.parseDouble(result) / Double.parseDouble(tekst.getText().toString()) );
+            if (operation == '/') {
+                if (tekst.getText().toString().equals("0")) {
+                    tekst.setText("Error");
+                    condition = true;
+                    firstNumber = true;
+                    operation = 'p';
+                    usedEqual = true;
+                } else
+                    result = "" + (Double.parseDouble(result) / Double.parseDouble(tekst.getText().toString()));
             }
         }
-
     }
+
+}
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,8 +14,9 @@ public class MainActivity extends AppCompatActivity {
     char operation;
     boolean firstNumber;
     boolean newCalculation;
-
+    char lastOperation;
     boolean usedEqual;
+    String lastNubmer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +25,12 @@ public class MainActivity extends AppCompatActivity {
 
         tekst = (TextView) findViewById(R.id.Text);
 
+        lastNubmer = "";
         result = "";
         condition = false;
         firstNumber = true;
         operation = 'p';
+        lastOperation = 'l';
         newCalculation = false;
         usedEqual = true;
 
@@ -38,12 +40,12 @@ public class MainActivity extends AppCompatActivity {
 
         usedEqual = false;
 
-        if (condition) {
+        if (condition) { //it is used to restart TextView after using some operations;
             tekst.setText("");
             condition = false;
         }
 
-        if (newCalculation && operation == 'p') {
+        if (newCalculation && operation == 'p') { //it is used to restart a result afrer using a equal sign;
             result = "";
             newCalculation = false;
         }
@@ -51,12 +53,12 @@ public class MainActivity extends AppCompatActivity {
         Button button = (Button) view;
 
         if (tekst.getText().toString().equals("0") && button.getText().toString().equals("0"))
-            return;
+            return; //if a TextView is a zero and we click on zero button dont do anything;
 
         else if (tekst.getText().toString().equals("0") && tekst.getText().toString().length() == 1 && !button.getText().toString().equals("0")) {
-            tekst.setText(button.getText().toString());
-        } else {
-            tekst.setText(tekst.getText().toString() + button.getText().toString());
+            tekst.setText(button.getText().toString()); //if a TextView is equal to zero and we click on other button change;
+        } else {                                        //TextView to that buttons name;
+            tekst.setText(tekst.getText().toString() + button.getText().toString()); //in all other cases just add button text on TextView;
         }
 
     }
@@ -159,9 +161,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void equal(View view) {
-        if (tekst.getText().equals("")) return;
-        else {
-            if (tekst.getText().equals(("-"))) return;
+        if (!tekst.getText().equals("")) {
+
+            if (tekst.getText().equals("-")) return;
+
+            if (usedEqual) {
+                lastOperation();
+
+                if (Double.parseDouble(result) % 1 == 0)
+                    tekst.setText(String.format("%.0f", Double.parseDouble(result)));
+
+                else tekst.setText(result);
+
+                return;
+            }
+
+            lastNubmer = tekst.getText().toString();
 
             if (firstNumber) result = tekst.getText().toString();
 
@@ -184,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
             firstNumber = true;
 
             newCalculation = true;
+
+            lastOperation = operation;
 
             operation = 'p';
 
@@ -273,6 +290,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void lastOperation() {
+        if (lastOperation == '+')
+            result = "" + (Double.parseDouble(result) + Double.parseDouble(lastNubmer));
+
+
+        if (lastOperation == '-')
+            result = "" + (Double.parseDouble(result) - Double.parseDouble(lastNubmer));
+
+
+        if (lastOperation == '*')
+            result = "" + (Double.parseDouble(result) * Double.parseDouble(lastNubmer));
+
+        if (lastOperation == '/') {
+            // if (tekst.getText().toString().equals("0")) {
+               /*     tekst.setText("Error");
+                    condition = true;
+                    firstNumber = true;
+                    operation = 'p';
+                    usedEqual = true;
+                } else*/
+            result = "" + (Double.parseDouble(result) / Double.parseDouble(lastNubmer));
+        }
+    }
+
 
 }
 

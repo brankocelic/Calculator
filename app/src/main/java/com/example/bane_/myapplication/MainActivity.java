@@ -166,7 +166,9 @@ public class MainActivity extends AppCompatActivity {
             if (tekst.getText().equals("-")) return;
 
             if (usedEqual) {
-                lastOperation();
+                if (tekst.getText().toString().equals("Error")) return;
+
+                else lastOperation();
 
                 if (Double.parseDouble(result) % 1 == 0)
                     tekst.setText(String.format("%.0f", Double.parseDouble(result)));
@@ -220,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 condition = false;
             }
 
-            if (operation != 'p' && !tekst.getText().toString().contains(".")) {
+            if (operation != 'p' && !tekst.getText().toString().contains(".") && condition) {
                 tekst.setText("0.");
                 condition = false;
             }
